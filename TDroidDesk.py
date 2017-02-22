@@ -85,6 +85,9 @@ def convert_att_desktop(attheme):
     desktop_theme = {}
 
     for desktop_key, att_key in theme_map.items():
+        if att_key not in attheme:
+            continue
+
         color = attheme[att_key]
         desktop_theme[desktop_key] = color
 
