@@ -14,6 +14,7 @@ TEMP_DIR = 'tmp'
 
 DESCRIPTION = 'Convert Telegram Android theme to Telegram Desktop ones.'
 
+
 def main():
     arg_parser = create_arg_parser()
     return parse_args(arg_parser)
@@ -95,6 +96,9 @@ def get_theme_map():
 
     with open(THEME_MAP_FILE, 'r') as fp:
         for line in fp.readlines():
+            if '=' not in line:
+                continue
+
             key, val = line.strip().split('=', 1)
             theme_map[key] = val
 
