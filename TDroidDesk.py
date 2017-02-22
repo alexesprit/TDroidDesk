@@ -86,6 +86,7 @@ def convert_att_desktop(attheme):
 
     for desktop_key, att_key in theme_map.items():
         if att_key not in attheme:
+            print('Missing {0} key in source theme'.format(att_key))
             continue
 
         color = attheme[att_key]
