@@ -18,6 +18,8 @@ SINGLE_COMMENT_CHARS = ['//', ';', '#']
 THEME_MAP_SEPARATOR = '='
 ATTHEME_SEPARATOR = '='
 
+DESKTOP_KEYS_FILE = 'desktop.keys'
+
 
 def main():
     arg_parser = create_arg_parser()
@@ -99,6 +101,7 @@ def convert_att_desktop(attheme):
 
 def get_theme_map():
     theme_map = {}
+    desktop_keys = get_desktop_keys()
 
     with open(THEME_MAP_FILE, 'r') as fp:
         for line in fp.readlines():
@@ -106,10 +109,22 @@ def get_theme_map():
                 continue
 
             if is_key_val_pair(line, THEME_MAP_SEPARATOR):
-                key, val = line.strip().split('=', 1)
-                theme_map[key] = val
+                desktop_key, android_key = line.strip().split('=', 1)
+                if desktop_key not in desktop_keys:
+                    print('Warning: unknown key: {0}'.format(desktop_key))
+
+                theme_map[desktop_key] = android_key
 
     return theme_map
+
+
+def get_desktop_keys():
+    desktop_keys = []
+
+    with open(DESKTOP_KEYS_FILE, 'r') as fp:
+        desktop_keys = [line.strip() for line in fp if line]
+
+    return desktop_keys
 
 
 def is_comment(line):
