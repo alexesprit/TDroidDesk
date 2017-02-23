@@ -13,6 +13,8 @@ TILED_FILE = 'tiled.png'
 COLORS_FILE = 'colors.tdesktop-theme'
 THEME_MAP_FILE = 'theme-map.ini'
 
+TEMP_FILES = (BACKGROUND_FILE, TILED_FILE, COLORS_FILE)
+
 THEME = 'theme'
 BACKGROUND = 'background'
 
@@ -104,6 +106,8 @@ def open_attheme(attheme_path):
 
 
 def save_desktop_theme(desktop_theme, filename):
+    remove_temp_files()
+
     with open(COLORS_FILE, 'w') as fp:
         for key, color in desktop_theme[THEME].items():
             fp.write('{0}: #{1:x};\n'.format(key, color))
@@ -121,9 +125,7 @@ def save_desktop_theme(desktop_theme, filename):
         write_file_to_zip(zp, COLORS_FILE)
         write_file_to_zip(zp, BACKGROUND_FILE)
 
-    remove_temp_file(COLORS_FILE)
-    remove_temp_file(TILED_FILE)
-    remove_temp_file(BACKGROUND_FILE)
+    remove_temp_files()
 
 
 def convert_att_desktop(attheme):
@@ -193,9 +195,10 @@ def get_theme_keys(filename):
     return theme_keys
 
 
-def remove_temp_file(filepath):
-    if os.path.exists(filepath):
-        os.remove(filepath)
+def remove_temp_files():
+    for filepath in TEMP_FILES:
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
 
 def write_file_to_zip(zp, filepath):
