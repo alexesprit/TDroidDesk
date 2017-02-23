@@ -19,6 +19,7 @@ THEME_MAP_SEPARATOR = '='
 ATTHEME_SEPARATOR = '='
 
 DESKTOP_KEYS_FILE = 'desktop.keys'
+ANDROID_KEYS_FILE = 'android.keys'
 
 
 def main():
@@ -90,7 +91,7 @@ def convert_att_desktop(attheme):
 
     for desktop_key, att_key in theme_map.items():
         if att_key not in attheme:
-            print('Missing {0} key in source theme'.format(att_key))
+            # print('Missing {0} key in source theme'.format(att_key))
             continue
 
         color = attheme[att_key]
@@ -101,7 +102,8 @@ def convert_att_desktop(attheme):
 
 def get_theme_map():
     theme_map = {}
-    desktop_keys = get_desktop_keys()
+    desktop_keys = get_desktop_theme_keys()
+    android_keys = get_android_theme_keys()
 
     with open(THEME_MAP_FILE, 'r') as fp:
         for line in fp.readlines():
@@ -112,19 +114,29 @@ def get_theme_map():
                 desktop_key, android_key = line.strip().split('=', 1)
                 if desktop_key not in desktop_keys:
                     print('Warning: unknown key: {0}'.format(desktop_key))
+                if android_key not in android_keys:
+                    print('Warning: unknown key: {0}'.format(android_key))
 
                 theme_map[desktop_key] = android_key
 
     return theme_map
 
 
-def get_desktop_keys():
-    desktop_keys = []
+def get_android_theme_keys():
+    return get_theme_keys(ANDROID_KEYS_FILE)
 
-    with open(DESKTOP_KEYS_FILE, 'r') as fp:
-        desktop_keys = [line.strip() for line in fp if line]
 
-    return desktop_keys
+def get_desktop_theme_keys():
+    return get_theme_keys(DESKTOP_KEYS_FILE)
+
+
+def get_theme_keys(filename):
+    theme_keys = []
+
+    with open(filename, 'r') as fp:
+        theme_keys = [line.strip() for line in fp if line]
+
+    return theme_keys
 
 
 def is_comment(line):
