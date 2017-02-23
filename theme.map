@@ -11,19 +11,33 @@ windowBg=windowBackgroundWhite
 windowBgActive=chats_actionBackground
 windowBgOver=actionBarDefault
 
+; chat list background
 dialogsBg=chat_wallpaper
+; chat list name text
 dialogsNameFg=chats_name
+; chat list message text
 dialogsTextFg=chats_messages
+; chat list date text
 dialogsDateFg=chats_date
+; chat list draft label
 dialogsDraftFg=chats_draft
+; chat list group or channel icon
 dialogsChatIconFg=chats_nameIcon
+; chat list group sender name text (or media message type text)
 dialogsTextFgService=chats_nameMessage
+; chat list sent message tick / double tick icon
 dialogsSentIconFg=chats_sentCheck
+; chat list sending message icon (clock)
 dialogsSendingIconFg=chats_sentClock
+; chat list verified icon background
 dialogsVerifiedIconBg=chats_verifiedBackground
+; chat list verified icon
 dialogsVerifiedIconFg=chats_verifiedCheck
+; chat list unread badge text
 dialogsUnreadFg=chats_unreadCounterText
+; chat list unread badge background for not muted chat
 dialogsUnreadBg=chats_unreadCounter
+; chat list unread badge background for muted chat
 dialogsUnreadBgMuted=chats_unreadCounterMuted
 
 ; inbox message text
