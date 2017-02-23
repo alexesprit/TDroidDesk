@@ -123,6 +123,7 @@ chat_inFileSelectedIcon
 chat_inForwardedNameText
 chat_inInstant
 chat_inInstantSelected
+chat_inlineResultIcon
 chat_inLoader
 chat_inLoaderPhoto
 chat_inLoaderPhotoIcon
@@ -155,7 +156,6 @@ chat_inViewsSelected
 chat_inVoiceSeekbar
 chat_inVoiceSeekbarFill
 chat_inVoiceSeekbarSelected
-chat_inlineResultIcon
 chat_linkSelectBackground
 chat_lockIcon
 chat_mediaBroadcast
@@ -252,14 +252,14 @@ chat_outVoiceSeekbarFill
 chat_outVoiceSeekbarSelected
 chat_previewDurationText
 chat_previewGameText
-chat_recordTime
-chat_recordVoiceCancel
 chat_recordedVoiceBackground
 chat_recordedVoiceDot
 chat_recordedVoicePlayPause
 chat_recordedVoicePlayPausePressed
 chat_recordedVoiceProgress
 chat_recordedVoiceProgressInner
+chat_recordTime
+chat_recordVoiceCancel
 chat_replyPanelClose
 chat_replyPanelIcons
 chat_replyPanelLine
@@ -269,9 +269,9 @@ chat_reportSpam
 chat_searchPanelIcons
 chat_searchPanelText
 chat_secretChatStatusText
-chat_secretTimeText
 chat_secretTimerBackground
 chat_secretTimerText
+chat_secretTimeText
 chat_selectedBackground
 chat_sentError
 chat_sentErrorIcon
@@ -283,8 +283,8 @@ chat_stickerNameText
 chat_stickerReplyLine
 chat_stickerReplyMessageText
 chat_stickerReplyNameText
-chat_stickerViaBotNameText
 chat_stickersHintPanel
+chat_stickerViaBotNameText
 chat_textSelectBackground
 chat_topPanelBackground
 chat_topPanelClose
