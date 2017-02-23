@@ -10,7 +10,6 @@ from argparse import ArgumentParser
 BACKGROUND_FILE = 'background.jpg'
 COLORS_FILE = 'colors.tdesktop-theme'
 THEME_MAP_FILE = 'theme-map.ini'
-TEMP_DIR = 'tmp'
 
 THEME = 'theme'
 BACKGROUND = 'background'
