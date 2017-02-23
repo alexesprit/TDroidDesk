@@ -1,36 +1,67 @@
 emojiPanBg=chat_emojiPanelBackground
-mainMenuBg=windowBackgroundWhite
 topBarBg=actionBarDefault
-dialogsNameFg=actionBarDefaultTitle
+
+boxSearchBg=actionBarDefaultSearch
+
+mainMenuBg=windowBackgroundWhite
+mainMenuCoverBg=actionBarDefault
+mainMenuCoverFg=actionBarDefaultTitle
+
+windowBg=windowBackgroundWhite
+windowBgActive=chats_actionBackground
 windowBgOver=actionBarDefault
 
-mainMenuCoverFg=chats_menuName
-
+dialogsBg=chat_wallpaper
 dialogsNameFg=chats_name
 dialogsTextFg=chats_messages
 dialogsDateFg=chats_date
 dialogsDraftFg=chats_draft
 dialogsChatIconFg=chats_nameIcon
 dialogsTextFgService=chats_nameMessage
+dialogsSentIconFg=chats_sentCheck
+dialogsSendingIconFg=chats_sentClock
 dialogsVerifiedIconBg=chats_verifiedBackground
 dialogsVerifiedIconFg=chats_verifiedCheck
 dialogsUnreadFg=chats_unreadCounterText
 dialogsUnreadBg=chats_unreadCounter
 dialogsUnreadBgMuted=chats_unreadCounterMuted
 
+; inbox message text
 historyTextInFg=chat_messageTextIn
+; inbox media filename text
+historyFileNameInFg=chat_inFileNameText
+; inbox media filename text in a selected message
+historyFileNameInFgSelected=chat_inFileInfoSelectedText
+; inbox message link
 historyLinkInFg=chat_messageLinkIn
-historyOutIconFg=chat_outSentCheck
-historyOutIconFgSelected=chat_outSentCheckSelected
+; inbox sending message icon (clock) (like in sent messages to yourself or in sent messages to a channel)
+historySendingInIconFg=chat_inSentClock
 
+; outbox message text
 historyTextOutFg=chat_messageTextOut
+; outbox media filename text
+historyFileNameOutFg=chat_outFileNameText
+; outbox media filename text in a selected message
+historyFileNameOutFgSelected=chat_outFileInfoSelectedText
+; outbox message link
 historyLinkOutFg=chat_messageLinkOut
+; outbox message tick / double tick icon
+historyOutIconFg=chat_outSentCheck
+; outbox message link in a selected text or message
+historyOutIconFgSelected=chat_outSentCheckSelected
+; outbox sending message icon (clock)
 historySendingOutIconFg=chat_outSentClock
-historySendingInvertedIconFg=chat_outSentClockSelected
+
+; media message tick / double tick icon (like in sent photo)
+historyIconFgInverted=chat_mediaSentCheck
+; media sending message icon (clock) (like in sent photo)
+historySendingInvertedIconFg=chat_mediaSentClock
+
 
 historyUnreadBarFg=chat_unreadMessagesStartText
 historyUnreadBarBg=chat_unreadMessagesStartBackground
 
+; Avatars background
 historyPeer1UserpicBg=avatar_backgroundRed
 historyPeer2UserpicBg=avatar_backgroundGreen
 historyPeer3UserpicBg=avatar_backgroundOrange
@@ -38,12 +69,23 @@ historyPeer4UserpicBg=avatar_backgroundBlue
 historyPeer5UserpicBg=avatar_backgroundViolet
 historyPeer6UserpicBg=avatar_backgroundPink
 historyPeer7UserpicBg=avatar_backgroundCyan
+historyPeerUserpicFg=avatar_text
+
+; Usernames
+historyPeer1NameFg=avatar_nameInMessageRed
+historyPeer2NameFg=avatar_nameInMessageGreen
+historyPeer3NameFg=avatar_nameInMessageOrange
+historyPeer4NameFg=avatar_nameInMessageBlue
+historyPeer5NameFg=avatar_nameInMessageViolet
+historyPeer6NameFg=avatar_nameInMessagePink
+historyPeer7NameFg=avatar_nameInMessageCyan
 
 msgInBg=chat_inBubble
 msgInBgSelected=chat_inBubbleSelected
 msgInShadow=chat_inBubbleShadow
 msgInDateFg=chat_inTimeText
 msgInDateFgSelected=chat_inTimeSelectedText
+msgFileInBg=chat_inFileIcon
 msgInServiceFg=chat_inForwardedNameText
 
 msgOutBg=chat_outBubble
@@ -51,4 +93,5 @@ msgOutBgSelected=chat_outBubbleSelected
 msgOutShadow=chat_outBubbleShadow
 msgOutDateFg=chat_outTimeText
 msgOutDateFgSelected=chat_outTimeSelectedText
+msgFileOutBg=chat_outFileIcon
 msgOutServiceFg=chat_outForwardedNameText
