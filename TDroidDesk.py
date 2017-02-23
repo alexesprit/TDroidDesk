@@ -18,6 +18,8 @@ TEMP_FILES = (BACKGROUND_FILE, TILED_FILE, COLORS_FILE)
 THEME = 'theme'
 BACKGROUND = 'background'
 
+TILED_BACKGROUND_SIZE = (100, 100)
+
 ATT_BACKGROUND_KEY = 'chat_wallpaper'
 
 DESCRIPTION = 'Convert Telegram Android theme to Telegram Desktop ones.'
@@ -176,7 +178,7 @@ def get_empty_theme():
 
 def get_background_from_color(color):
     r, g, b, a = get_rgba_from_color(color)
-    return Image.new('RGB', (100, 100), (r, g, b))
+    return Image.new('RGB', TILED_BACKGROUND_SIZE, (r, g, b))
 
 
 def get_android_theme_keys():
