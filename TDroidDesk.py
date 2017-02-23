@@ -5,14 +5,18 @@ import sys
 import zipfile
 
 from argparse import ArgumentParser
+from PIL import Image
 
 
 BACKGROUND_FILE = 'background.jpg'
+TILED_FILE = 'tiled.png'
 COLORS_FILE = 'colors.tdesktop-theme'
 THEME_MAP_FILE = 'theme-map.ini'
 
 THEME = 'theme'
 BACKGROUND = 'background'
+
+ATT_BACKGROUND_KEY = 'chat_wallpaper'
 
 DESCRIPTION = 'Convert Telegram Android theme to Telegram Desktop ones.'
 
@@ -90,6 +94,12 @@ def open_attheme(attheme_path):
                     # malformed theme, ignore background image
                     break
 
+    if not attheme[BACKGROUND]:
+        if ATT_BACKGROUND_KEY in attheme[THEME]:
+            attheme[BACKGROUND] = attheme[THEME][ATT_BACKGROUND_KEY]
+        else:
+            print('Warning: missing background in source theme')
+
     return attheme
 
 
@@ -98,16 +108,22 @@ def save_desktop_theme(desktop_theme, filename):
         for key, color in desktop_theme[THEME].items():
             fp.write('{0}: #{1:x};\n'.format(key, color))
 
-    with open(BACKGROUND_FILE, 'wb') as fp:
-        fp.write(desktop_theme[BACKGROUND])
+    background = desktop_theme[BACKGROUND]
+    if isinstance(background, bytearray):
+        with open(BACKGROUND_FILE, 'wb') as fp:
+            fp.write(background)
+    elif (isinstance(background, int)):
+        get_background_from_color(background).save(TILED_FILE, 'PNG')
 
     desktop_theme_file = '{0}.tdesktop-theme'.format(filename)
     with zipfile.ZipFile(desktop_theme_file, mode='w') as zp:
-        zp.write(COLORS_FILE)
-        zp.write(BACKGROUND_FILE)
+        write_file_to_zip(zp, TILED_FILE)
+        write_file_to_zip(zp, COLORS_FILE)
+        write_file_to_zip(zp, BACKGROUND_FILE)
 
-    os.remove(COLORS_FILE)
-    os.remove(BACKGROUND_FILE)
+    remove_temp_file(COLORS_FILE)
+    remove_temp_file(TILED_FILE)
+    remove_temp_file(BACKGROUND_FILE)
 
 
 def convert_att_desktop(attheme):
@@ -156,6 +172,10 @@ def get_empty_theme():
     }
 
 
+def get_background_from_color(color):
+    return Image.new('RGB', (100, 100), (228, 150, 150))
+
+
 def get_android_theme_keys():
     return get_theme_keys(ANDROID_KEYS_FILE)
 
@@ -171,6 +191,16 @@ def get_theme_keys(filename):
         theme_keys = [line.strip() for line in fp if line]
 
     return theme_keys
+
+
+def remove_temp_file(filepath):
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
+
+def write_file_to_zip(zp, filepath):
+    if os.path.exists(filepath):
+        zp.write(filepath)
 
 
 def is_comment(line):
@@ -190,13 +220,18 @@ def is_end_of_background(buf):
 
 def convert_signed_int(value):
     rgb = (value + 0x100000000)
+    r, g, b, a = get_rgba_from_color(rgb)
 
+    return (r << 24) | (g << 16) | (b << 8) | a
+
+
+def get_rgba_from_color(rgb):
     a = (rgb & 0xFF000000) >> 24
     r = (rgb & 0x00FF0000) >> 16
     g = (rgb & 0x0000FF00) >> 8
     b = (rgb & 0x000000FF)
 
-    return (r << 24) | (g << 16) | (b << 8) | a
+    return r, g, b, a
 
 
 if __name__ == '__main__':
