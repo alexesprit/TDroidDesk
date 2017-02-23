@@ -14,6 +14,10 @@ TEMP_DIR = 'tmp'
 
 DESCRIPTION = 'Convert Telegram Android theme to Telegram Desktop ones.'
 
+SINGLE_COMMENT_CHARS = ['//', ';', '#']
+THEME_MAP_SEPARATOR = '='
+ATTHEME_SEPARATOR = '='
+
 
 def main():
     arg_parser = create_arg_parser()
@@ -57,13 +61,11 @@ def open_attheme(attheme_path):
             if 'WPS' in line:
                 break
 
-            if '=' not in line:
-                continue
+            if is_key_val_pair(line, ATTHEME_SEPARATOR):
+                key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
+                color = convert_signed_int(int(raw_color))
 
-            key, raw_color = line.strip().split('=', 1)
-            color = convert_signed_int(int(raw_color))
-
-            attheme[key] = color
+                attheme[key] = color
 
     return attheme
 
@@ -100,13 +102,25 @@ def get_theme_map():
 
     with open(THEME_MAP_FILE, 'r') as fp:
         for line in fp.readlines():
-            if '=' not in line:
+            if is_comment(line):
                 continue
 
-            key, val = line.strip().split('=', 1)
-            theme_map[key] = val
+            if is_key_val_pair(line, THEME_MAP_SEPARATOR):
+                key, val = line.strip().split('=', 1)
+                theme_map[key] = val
 
     return theme_map
+
+
+def is_comment(line):
+    for char in SINGLE_COMMENT_CHARS:
+        if char in line:
+            return True
+    return False
+
+
+def is_key_val_pair(line, sep):
+    return sep in line
 
 
 def convert_signed_int(value):
