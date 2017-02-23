@@ -51,7 +51,11 @@ def parse_args(arg_parser):
 
     theme = args.theme
     if os.path.isfile(theme):
-        attheme = open_attheme(theme)
+        try:
+            attheme = open_attheme(theme)
+        except (ValueError, UnicodeDecodeError):
+            print('Error: invalid theme file: {0}'.format(theme))
+            return 3
         desktop_theme = convert_att_desktop(attheme)
         save_desktop_theme(desktop_theme, os.path.splitext(theme)[0])
     elif os.path.isdir(theme):
