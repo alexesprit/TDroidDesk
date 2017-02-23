@@ -110,7 +110,14 @@ def get_theme_map():
 
 
 def convert_signed_int(value):
-    return (value + 0x100000000) & 0xFFFFFF
+    rgb = (value + 0x100000000)
+
+    a = (rgb & 0xFF000000) >> 24
+    r = (rgb & 0x00FF0000) >> 16
+    g = (rgb & 0x0000FF00) >> 8
+    b = (rgb & 0x000000FF)
+
+    return (r << 24) | (g << 16) | (b << 8) | a
 
 
 if __name__ == '__main__':
