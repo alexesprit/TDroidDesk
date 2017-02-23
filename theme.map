@@ -85,7 +85,12 @@ msgInBgSelected=chat_inBubbleSelected
 msgInShadow=chat_inBubbleShadow
 msgInDateFg=chat_inTimeText
 msgInDateFgSelected=chat_inTimeSelectedText
-msgFileInBg=chat_inFileIcon
+; inbox audio file download circle background
+msgFileInBg=chat_inLoader
+; inbox audio file download circle background with mouse over
+msgFileInBgOver=chat_outLoader
+; inbox selected audio file download circle background
+msgFileInBgSelected=chat_inLoaderSelected
 msgInServiceFg=chat_inForwardedNameText
 
 msgOutBg=chat_outBubble
@@ -93,5 +98,11 @@ msgOutBgSelected=chat_outBubbleSelected
 msgOutShadow=chat_outBubbleShadow
 msgOutDateFg=chat_outTimeText
 msgOutDateFgSelected=chat_outTimeSelectedText
-msgFileOutBg=chat_outFileIcon
+; outbox audio file download circle background
+msgFileOutBg=chat_outLoader
+; outbox audio file download circle background with mouse over
+msgFileOutBgOver=chat_outLoader
+; outbox selected audio file download circle background
+msgFileOutBgSelected=chat_outLoaderSelected
+
 msgOutServiceFg=chat_outForwardedNameText
