@@ -68,7 +68,6 @@ def open_attheme(attheme_path):
 
     attheme = get_empty_theme()
     with open(attheme_path, 'rb') as fp:
-        # TODO: read embed image
         while True:
             if state == STATE_READ_THEME:
                 line = fp.readline().decode('ascii')
@@ -89,13 +88,9 @@ def open_attheme(attheme_path):
             elif state == STATE_READ_BACKGROUND:
                 buf = fp.read(1024)
                 if buf:
-                    # FIXME: Ignore WPE tag
-                    # if is_end_of_background(buf):
-                    #    break
-
                     attheme[BACKGROUND].extend(buf)
                 else:
-                    # malformed theme, ignore background image
+                    # malformed theme or the end of stream
                     break
 
     if not attheme[BACKGROUND]:
@@ -218,10 +213,6 @@ def is_comment(line):
 
 def is_key_val_pair(line, sep):
     return sep in line
-
-
-def is_end_of_background(buf):
-    return buf.endswith(b'WPE\n') or buf.endswith(b'WPE')
 
 
 def argb2rgba(rgb):
