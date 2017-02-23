@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 
 
 COLORS_FILE = 'colors.tdesktop-theme'
-THEME_MAP_FILE = 'theme.map'
+THEME_MAP_FILE = 'theme-map.ini'
 TEMP_DIR = 'tmp'
 
 DESCRIPTION = 'Convert Telegram Android theme to Telegram Desktop ones.'
