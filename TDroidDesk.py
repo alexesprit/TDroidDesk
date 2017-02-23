@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import codecs
 import os
 import sys
 import zipfile
@@ -8,9 +7,13 @@ import zipfile
 from argparse import ArgumentParser
 
 
+BACKGROUND_FILE = 'background.jpg'
 COLORS_FILE = 'colors.tdesktop-theme'
 THEME_MAP_FILE = 'theme-map.ini'
 TEMP_DIR = 'tmp'
+
+THEME = 'theme'
+BACKGROUND = 'background'
 
 DESCRIPTION = 'Convert Telegram Android theme to Telegram Desktop ones.'
 
@@ -20,6 +23,9 @@ ATTHEME_SEPARATOR = '='
 
 DESKTOP_KEYS_FILE = 'desktop.keys'
 ANDROID_KEYS_FILE = 'android.keys'
+
+STATE_READ_THEME = 0
+STATE_READ_BACKGROUND = 1
 
 
 def main():
@@ -51,51 +57,73 @@ def parse_args(arg_parser):
 
 
 def open_attheme(attheme_path):
-    attheme = {}
-    with codecs.open(attheme_path, 'r', 'cp1251') as fp:
+    state = STATE_READ_THEME
+
+    attheme = get_empty_theme()
+    with open(attheme_path, 'rb') as fp:
         # TODO: read embed image
         while True:
-            line = fp.readline()
+            if state == STATE_READ_THEME:
+                line = fp.readline().decode('ascii')
 
-            # Reached EOL
-            if not line:
-                break
+                # Reached EOL
+                if not line:
+                    break
 
-            if 'WPS' in line:
-                break
+                if 'WPS' in line:
+                    state = STATE_READ_BACKGROUND
+                    continue
 
-            if is_key_val_pair(line, ATTHEME_SEPARATOR):
-                key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
-                color = convert_signed_int(int(raw_color))
+                if is_key_val_pair(line, ATTHEME_SEPARATOR):
+                    key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
+                    color = convert_signed_int(int(raw_color))
 
-                attheme[key] = color
+                    attheme[THEME][key] = color
+            elif state == STATE_READ_BACKGROUND:
+                buf = fp.read(1024)
+                if buf:
+                    # FIXME: Ignore WPE tag
+                    # if is_end_of_background(buf):
+                    #    break
+
+                    attheme[BACKGROUND].extend(buf)
+                else:
+                    # malformed theme, ignore background image
+                    break
 
     return attheme
 
 
 def save_desktop_theme(desktop_theme, filename):
     with open(COLORS_FILE, 'w') as fp:
-        for key, color in desktop_theme.items():
+        for key, color in desktop_theme[THEME].items():
             fp.write('{0}: #{1:x};\n'.format(key, color))
+
+    with open(BACKGROUND_FILE, 'wb') as fp:
+        fp.write(desktop_theme[BACKGROUND])
 
     desktop_theme_file = '{0}.tdesktop-theme'.format(filename)
     with zipfile.ZipFile(desktop_theme_file, mode='w') as zp:
         zp.write(COLORS_FILE)
+        zp.write(BACKGROUND_FILE)
 
     os.remove(COLORS_FILE)
+    os.remove(BACKGROUND_FILE)
 
 
 def convert_att_desktop(attheme):
     theme_map = get_theme_map()
-    desktop_theme = {}
+    desktop_theme = get_empty_theme()
 
     for desktop_key, att_key in theme_map.items():
-        if att_key not in attheme:
+        if att_key not in attheme[THEME]:
             # print('Missing {0} key in source theme'.format(att_key))
             continue
 
-        color = attheme[att_key]
-        desktop_theme[desktop_key] = color
+        color = attheme[THEME][att_key]
+        desktop_theme[THEME][desktop_key] = color
+
+    desktop_theme[BACKGROUND] = attheme[BACKGROUND]
 
     return desktop_theme
 
@@ -120,6 +148,13 @@ def get_theme_map():
                 theme_map[desktop_key] = android_key
 
     return theme_map
+
+
+def get_empty_theme():
+    return {
+        'theme': {},
+        'background': bytearray()
+    }
 
 
 def get_android_theme_keys():
@@ -148,6 +183,10 @@ def is_comment(line):
 
 def is_key_val_pair(line, sep):
     return sep in line
+
+
+def is_end_of_background(buf):
+    return buf.endswith(b'WPE\n') or buf.endswith(b'WPE')
 
 
 def convert_signed_int(value):
