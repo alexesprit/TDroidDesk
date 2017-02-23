@@ -83,7 +83,7 @@ def open_attheme(attheme_path):
 
                 if is_key_val_pair(line, ATTHEME_SEPARATOR):
                     key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
-                    color = convert_signed_int(int(raw_color))
+                    color = argb2rgba(int(raw_color))
 
                     attheme[THEME][key] = color
             elif state == STATE_READ_BACKGROUND:
@@ -224,8 +224,7 @@ def is_end_of_background(buf):
     return buf.endswith(b'WPE\n') or buf.endswith(b'WPE')
 
 
-def convert_signed_int(value):
-    rgb = (value + 0x100000000)
+def argb2rgba(rgb):
     a, r, g, b = get_argb_from_color(rgb)
 
     return (r << 24) | (g << 16) | (b << 8) | a
