@@ -175,7 +175,8 @@ def get_empty_theme():
 
 
 def get_background_from_color(color):
-    return Image.new('RGB', (100, 100), (228, 150, 150))
+    r, g, b, a = get_rgba_from_color(color)
+    return Image.new('RGB', (100, 100), (r, g, b))
 
 
 def get_android_theme_keys():
@@ -223,16 +224,25 @@ def is_end_of_background(buf):
 
 def convert_signed_int(value):
     rgb = (value + 0x100000000)
-    r, g, b, a = get_rgba_from_color(rgb)
+    a, r, g, b = get_argb_from_color(rgb)
 
     return (r << 24) | (g << 16) | (b << 8) | a
 
 
-def get_rgba_from_color(rgb):
+def get_argb_from_color(rgb):
     a = (rgb & 0xFF000000) >> 24
     r = (rgb & 0x00FF0000) >> 16
     g = (rgb & 0x0000FF00) >> 8
     b = (rgb & 0x000000FF)
+
+    return a, r, g, b
+
+
+def get_rgba_from_color(rgb):
+    r = (rgb & 0xFF000000) >> 24
+    g = (rgb & 0x00FF0000) >> 16
+    b = (rgb & 0x0000FF00) >> 8
+    a = (rgb & 0x000000FF)
 
     return r, g, b, a
 
