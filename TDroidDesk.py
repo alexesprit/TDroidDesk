@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import glob
 import os
 import sys
 import zipfile
@@ -12,6 +13,9 @@ BACKGROUND_FILE = 'background.jpg'
 TILED_FILE = 'tiled.png'
 COLORS_FILE = 'colors.tdesktop-theme'
 THEME_MAP_FILE = 'theme-map.ini'
+
+ATTHEME_WILDCARD = '*.attheme'
+DESKTOP_THEME_FILENAME = '{0}.tdesktop-theme'
 
 TEMP_FILES = (BACKGROUND_FILE, TILED_FILE, COLORS_FILE)
 
@@ -42,29 +46,51 @@ def main():
 
 def create_arg_parser():
     parser = ArgumentParser(prog='TDroidDesk', description=DESCRIPTION)
-    parser.add_argument(dest='theme', help='theme to convert')
+    parser.add_argument(dest='theme', nargs='?', help='theme to convert')
     return parser
 
 
 def parse_args(arg_parser):
     args = arg_parser.parse_args()
 
-    theme = args.theme
-    if os.path.isfile(theme):
+    theme_path = args.theme
+    if not theme_path:
+        convert_themes_in_cwd()
+    elif os.path.isfile(theme_path):
         try:
-            attheme = open_attheme(theme)
-        except (ValueError, UnicodeDecodeError):
-            print('Error: invalid theme file: {0}'.format(theme))
-            return 3
-        desktop_theme = convert_att_desktop(attheme)
-        save_desktop_theme(desktop_theme, os.path.splitext(theme)[0])
-    elif os.path.isdir(theme):
-        arg_parser.error('{0} is a directory'.format(theme))
+            convert_theme(theme_path)
+        except ValueError:
+            print('Error: invalid theme file: {0}'.format(theme_path))
+    elif os.path.isdir(theme_path):
+        arg_parser.error('{0} is a directory'.format(theme_path))
         return 1
     else:
-        arg_parser.error('{0} does not exist'.format(theme))
+        arg_parser.error('{0} does not exist'.format(theme_path))
         return 2
     return 0
+
+
+def convert_themes_in_cwd():
+    for theme_path in glob.iglob(ATTHEME_WILDCARD):
+        try:
+            convert_theme(theme_path)
+        except ValueError:
+            print('Error: invalid theme file: {0}'.format(theme_path))
+
+
+def convert_theme(theme_path):
+    theme_name = os.path.splitext(theme_path)[0]
+    print('Converting {0}...'.format(theme_name))
+
+    try:
+        attheme = open_attheme(theme_path)
+    except (ValueError, UnicodeDecodeError):
+        raise ValueError('Error: invalid theme file: {0}'.format(theme_path))
+
+    desktop_theme = convert_att_desktop(attheme)
+    save_desktop_theme(desktop_theme, theme_name)
+
+    print('Done converting {0}'.format(theme_name))
 
 
 def open_attheme(attheme_path):
@@ -120,7 +146,7 @@ def save_desktop_theme(desktop_theme, filename):
     elif (isinstance(background, int)):
         get_background_from_color(background).save(TILED_FILE, 'PNG')
 
-    desktop_theme_file = '{0}.tdesktop-theme'.format(filename)
+    desktop_theme_file = DESKTOP_THEME_FILENAME.format(filename)
     with zipfile.ZipFile(desktop_theme_file, mode='w') as zp:
         write_file_to_zip(zp, TILED_FILE)
         write_file_to_zip(zp, COLORS_FILE)
