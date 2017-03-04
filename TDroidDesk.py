@@ -112,7 +112,7 @@ def open_attheme(attheme_path):
 
                 if is_key_val_pair(line, ATTHEME_SEPARATOR):
                     key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
-                    color = argb2rgba(int(raw_color))
+                    color = read_color(raw_color)
 
                     attheme[THEME][key] = color
             elif state == STATE_READ_BACKGROUND:
@@ -243,6 +243,24 @@ def is_comment(line):
 
 def is_key_val_pair(line, sep):
     return sep in line
+
+
+def read_color(raw_color):
+    if (is_number(raw_color)):
+        return argb2rgba(int(raw_color))
+    elif raw_color.startswith('#'):
+        return int(raw_color[1:], 16)
+    else:
+        raise ValueError('Invalid color: {0}'.format(raw_color))
+
+
+def is_number(s):
+    try:
+        complex(s)
+    except ValueError:
+        return False
+
+    return True
 
 
 def argb2rgba(rgb):
