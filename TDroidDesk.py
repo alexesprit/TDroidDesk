@@ -137,7 +137,7 @@ def save_desktop_theme(desktop_theme, filename):
 
     with open(COLORS_FILE, 'w') as fp:
         for key, color in desktop_theme[THEME].items():
-            fp.write('{0}: #{1:x};\n'.format(key, color))
+            fp.write('{0}: #{1:08x};\n'.format(key, color))
 
     background = desktop_theme[BACKGROUND]
     if isinstance(background, bytearray):
