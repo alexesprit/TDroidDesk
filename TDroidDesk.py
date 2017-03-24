@@ -1,5 +1,7 @@
 # coding: utf-8
 
+"""Convert Telegram Android theme to Telegram Desktop ones."""
+
 import glob
 import os
 import sys
@@ -40,17 +42,20 @@ STATE_READ_BACKGROUND = 1
 
 
 def main():
+    """Entry point."""
     arg_parser = create_arg_parser()
     return parse_args(arg_parser)
 
 
 def create_arg_parser():
+    """Create ArgumentParser object."""
     parser = ArgumentParser(prog='TDroidDesk', description=DESCRIPTION)
     parser.add_argument(dest='theme', nargs='?', help='theme to convert')
     return parser
 
 
 def parse_args(arg_parser):
+    """Parse arguments."""
     args = arg_parser.parse_args()
 
     theme_path = args.theme
@@ -71,6 +76,7 @@ def parse_args(arg_parser):
 
 
 def convert_themes_in_cwd():
+    """Convert all Android themes in current working directory."""
     for theme_path in glob.iglob(ATTHEME_WILDCARD):
         try:
             convert_theme(theme_path)
@@ -79,6 +85,11 @@ def convert_themes_in_cwd():
 
 
 def convert_theme(theme_path):
+    """Convert Android theme.
+
+    Arguments:
+    theme_path - path to Android theme file
+    """
     theme_name = os.path.splitext(theme_path)[0]
     print('Converting {0}...'.format(theme_name))
 
@@ -94,6 +105,11 @@ def convert_theme(theme_path):
 
 
 def open_attheme(attheme_path):
+    """Read Android theme and return object that describes the theme.
+
+    Arguments:
+    theme_path - path to Android theme file
+    """
     state = STATE_READ_THEME
 
     attheme = get_empty_theme()
@@ -133,6 +149,12 @@ def open_attheme(attheme_path):
 
 
 def save_desktop_theme(desktop_theme, filename):
+    """Save desktop theme object to desktop theme format.
+
+    Arguments:
+    desktop_theme - object that represents desktop theme
+    filename - path to file to save
+    """
     remove_temp_files()
 
     with open(COLORS_FILE, 'w') as fp:
@@ -156,6 +178,11 @@ def save_desktop_theme(desktop_theme, filename):
 
 
 def convert_att_desktop(attheme):
+    """Create object that describes desktop theme.
+
+    Arguments:
+    attheme - object that represents Android theme
+    """
     theme_map = get_theme_map()
     desktop_theme = get_empty_theme()
 
@@ -173,6 +200,7 @@ def convert_att_desktop(attheme):
 
 
 def get_theme_map():
+    """Return dict that maps dekstop theme keys to Android theme ones."""
     theme_map = {}
     desktop_keys = get_desktop_theme_keys()
     android_keys = get_android_theme_keys()
@@ -195,6 +223,7 @@ def get_theme_map():
 
 
 def get_empty_theme():
+    """Create object that contains empty theme."""
     return {
         'theme': {},
         'background': bytearray()
@@ -202,19 +231,31 @@ def get_empty_theme():
 
 
 def get_background_from_color(color):
+    """Create image based on given color.
+
+    Arguments:
+    color - color in RGBA format
+    """
     r, g, b, a = get_rgba_from_color(color)
     return Image.new('RGB', TILED_BACKGROUND_SIZE, (r, g, b))
 
 
 def get_android_theme_keys():
+    """Return list of Android theme keys."""
     return get_theme_keys(ANDROID_KEYS_FILE)
 
 
 def get_desktop_theme_keys():
+    """Return list of desktop theme keys."""
     return get_theme_keys(DESKTOP_KEYS_FILE)
 
 
 def get_theme_keys(filename):
+    """Return list of theme keys.
+
+    Arguments:
+    filename - path to file where keys are stored
+    """
     theme_keys = []
 
     with open(filename, 'r') as fp:
@@ -224,17 +265,29 @@ def get_theme_keys(filename):
 
 
 def remove_temp_files():
+    """Remove temporary files that are used during converting."""
     for filepath in TEMP_FILES:
         if os.path.exists(filepath):
             os.remove(filepath)
 
 
 def write_file_to_zip(zp, filepath):
+    """Add file to given zip object. Do nothing is file is not exist.
+
+    Arguments:
+    zp - zip object
+    filepath - path to file to add
+    """
     if os.path.exists(filepath):
         zp.write(filepath)
 
 
 def is_comment(line):
+    """Check if line contains comment.
+
+    Arguments:
+    line - single line of file
+    """
     for char in SINGLE_COMMENT_CHARS:
         if char in line:
             return True
@@ -242,10 +295,21 @@ def is_comment(line):
 
 
 def is_key_val_pair(line, sep):
+    """Check if line contains key=val pair.
+
+    Arguments:
+    line - single line of file
+    sep - separator
+    """
     return sep in line
 
 
 def read_color(raw_color):
+    """Read raw color and return integer representation of color.
+
+    Arguments:
+    raw_color - string that contains color
+    """
     if (is_number(raw_color)):
         return argb2rgba(int(raw_color))
     elif raw_color.startswith('#'):
@@ -254,35 +318,55 @@ def read_color(raw_color):
         raise ValueError('Invalid color: {0}'.format(raw_color))
 
 
-def is_number(s):
+def is_number(string):
+    """Check if given string is a number.
+
+    Arguments:
+    string - string that supposed to have number
+    """
     try:
-        complex(s)
+        complex(string)
     except ValueError:
         return False
 
     return True
 
 
-def argb2rgba(rgb):
-    a, r, g, b = get_argb_from_color(rgb)
+def argb2rgba(argb):
+    """Convert color from ARGB to RGBA format.
+
+    Arguments:
+    argb - color in ARGB format
+    """
+    a, r, g, b = get_argb_from_color(argb)
 
     return (r << 24) | (g << 16) | (b << 8) | a
 
 
-def get_argb_from_color(rgb):
-    a = (rgb & 0xFF000000) >> 24
-    r = (rgb & 0x00FF0000) >> 16
-    g = (rgb & 0x0000FF00) >> 8
-    b = (rgb & 0x000000FF)
+def get_argb_from_color(argb):
+    """Return typle of A, R, G, B components from given color.
+
+    Arguments:
+    rgb - color
+    """
+    a = (argb & 0xFF000000) >> 24
+    r = (argb & 0x00FF0000) >> 16
+    g = (argb & 0x0000FF00) >> 8
+    b = (argb & 0x000000FF)
 
     return a, r, g, b
 
 
-def get_rgba_from_color(rgb):
-    r = (rgb & 0xFF000000) >> 24
-    g = (rgb & 0x00FF0000) >> 16
-    b = (rgb & 0x0000FF00) >> 8
-    a = (rgb & 0x000000FF)
+def get_rgba_from_color(rgba):
+    """Return typle of R, G, B, A components from given color.
+
+    Arguments:
+    rgba - color
+    """
+    r = (rgba & 0xFF000000) >> 24
+    g = (rgba & 0x00FF0000) >> 16
+    b = (rgba & 0x0000FF00) >> 8
+    a = (rgba & 0x000000FF)
 
     return r, g, b, a
 
