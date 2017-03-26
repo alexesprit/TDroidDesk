@@ -239,11 +239,11 @@ def get_theme_map():
 def get_transparency_map():
     """Return dict that contains transparency lever for colors."""
     def read_alpha(key, val):
-        if (is_number(val)):
+        try:
             return int(val, 16)
-
-        raise ValueError(
-            'Invalid transparency value: {0}={1}'.format(key, val))
+        except ValueError:
+            raise ValueError(
+                'Invalid transparency value: {0}={1}'.format(key, val))
 
     return get_map(TRANSPARENCE_MAP_FILE, read_alpha)
 
