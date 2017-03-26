@@ -242,14 +242,18 @@ def get_transparency_map():
         try:
             return int(val, 16)
         except ValueError:
-            raise ValueError(
-                'Invalid transparency value: {0}={1}'.format(key, val))
+            print('Warning: invalid transparency value: {0}={1}'.format(
+                key, val))
+            return None
 
     return get_map(TRANSPARENCE_MAP_FILE, read_alpha)
 
 
 def get_map(filepath, func=None):
     """Return dict that maps keys to values.
+
+    If 'func' parameter is defined, a function value will be used as
+    a key value. If function returns 'None', the key will be ignored.
 
     Arguments:
     filepath - path to file contains map
@@ -265,6 +269,8 @@ def get_map(filepath, func=None):
                 key, val = line.strip().split('=', 1)
                 if func:
                     val = func(key, val)
+                    if not val:
+                        continue
                 raw_map[key] = val
 
     return raw_map
