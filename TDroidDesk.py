@@ -81,8 +81,8 @@ def convert_themes_in_cwd():
     for theme_path in glob.iglob(ATTHEME_WILDCARD):
         try:
             convert_theme(theme_path)
-        except ValueError:
-            print('Error: invalid theme file: {0}'.format(theme_path))
+        except ValueError as err:
+            print(str(err))
 
 
 def convert_theme(theme_path):
