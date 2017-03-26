@@ -65,8 +65,8 @@ def parse_args(arg_parser):
     elif os.path.isfile(theme_path):
         try:
             convert_theme(theme_path)
-        except ValueError as e:
-            print(str(e))
+        except ValueError as err:
+            print('Error: {0}'.format(err))
     elif os.path.isdir(theme_path):
         arg_parser.error('{0} is a directory'.format(theme_path))
         return 1
@@ -82,7 +82,7 @@ def convert_themes_in_cwd():
         try:
             convert_theme(theme_path)
         except ValueError as err:
-            print(str(err))
+            print('Error: {0}'.format(err))
 
 
 def convert_theme(theme_path):
@@ -97,7 +97,7 @@ def convert_theme(theme_path):
     try:
         attheme = open_attheme(theme_path)
     except UnicodeDecodeError:
-        raise ValueError('Error: invalid theme file: {0}'.format(theme_path))
+        raise ValueError('Invalid theme file: {0}'.format(theme_path))
 
     desktop_theme = convert_att_desktop(attheme)
     save_desktop_theme(desktop_theme, theme_name)
