@@ -128,12 +128,7 @@ def open_attheme(attheme_path):
                     continue
 
                 if is_key_val_pair(line, ATTHEME_SEPARATOR):
-                    key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
-                    try:
-                        color = read_color(raw_color)
-                    except ValueError:
-                        raise ValueError(
-                            'Invalid color: {0}={1}'.format(key, raw_color))
+                    key, color = parse_theme_line(line)
 
                     attheme[THEME][key] = color
             elif state == STATE_READ_BACKGROUND:
@@ -151,6 +146,21 @@ def open_attheme(attheme_path):
             print('Warning: missing background in source theme')
 
     return attheme
+
+
+def parse_theme_line(line):
+    """Parse single line of theme file.
+
+    Arguments:
+    line - line that contains key-val pair.
+    """
+    key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
+    try:
+        color = read_color(raw_color)
+        return key, color
+    except ValueError:
+        raise ValueError(
+            'Invalid color: {0}={1}'.format(key, raw_color))
 
 
 def save_desktop_theme(desktop_theme, filename):
