@@ -65,8 +65,8 @@ def parse_args(arg_parser):
     elif os.path.isfile(theme_path):
         try:
             convert_theme(theme_path)
-        except ValueError:
-            print('Error: invalid theme file: {0}'.format(theme_path))
+        except ValueError as e:
+            print(str(e))
     elif os.path.isdir(theme_path):
         arg_parser.error('{0} is a directory'.format(theme_path))
         return 1
@@ -96,7 +96,7 @@ def convert_theme(theme_path):
 
     try:
         attheme = open_attheme(theme_path)
-    except (ValueError, UnicodeDecodeError):
+    except UnicodeDecodeError:
         raise ValueError('Error: invalid theme file: {0}'.format(theme_path))
 
     desktop_theme = convert_att_desktop(attheme)
@@ -129,7 +129,11 @@ def open_attheme(attheme_path):
 
                 if is_key_val_pair(line, ATTHEME_SEPARATOR):
                     key, raw_color = line.strip().split(ATTHEME_SEPARATOR, 1)
-                    color = read_color(raw_color)
+                    try:
+                        color = read_color(raw_color)
+                    except ValueError:
+                        raise ValueError(
+                            'Invalid color: {0}={1}'.format(key, raw_color))
 
                     attheme[THEME][key] = color
             elif state == STATE_READ_BACKGROUND:
