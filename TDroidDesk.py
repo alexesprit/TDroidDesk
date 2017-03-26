@@ -15,6 +15,7 @@ BACKGROUND_FILE = 'background.jpg'
 TILED_FILE = 'tiled.png'
 COLORS_FILE = 'colors.tdesktop-theme'
 THEME_MAP_FILE = 'theme-map.ini'
+TRANSPARENCE_MAP_FILE = 'transparency-map.ini'
 
 ATTHEME_WILDCARD = '*.attheme'
 DESKTOP_THEME_FILENAME = '{0}.tdesktop-theme'
@@ -184,6 +185,7 @@ def convert_att_desktop(attheme):
     attheme - object that represents Android theme
     """
     theme_map = get_theme_map()
+    transparency_map = get_transparency_map()
     desktop_theme = get_empty_theme()
 
     for desktop_key, att_key in theme_map.items():
@@ -192,6 +194,10 @@ def convert_att_desktop(attheme):
             continue
 
         color = attheme[THEME][att_key]
+        if desktop_key in transparency_map:
+            alpha = transparency_map[desktop_key]
+            color = apply_transparency(color, alpha)
+
         desktop_theme[THEME][desktop_key] = color
 
     desktop_theme[BACKGROUND] = attheme[BACKGROUND]
@@ -201,25 +207,53 @@ def convert_att_desktop(attheme):
 
 def get_theme_map():
     """Return dict that maps dekstop theme keys to Android theme ones."""
-    theme_map = {}
+    theme_map = get_map(THEME_MAP_FILE)
     desktop_keys = get_desktop_theme_keys()
     android_keys = get_android_theme_keys()
 
-    with open(THEME_MAP_FILE, 'r') as fp:
+    for desktop_key, android_key in theme_map.items():
+        if desktop_key not in desktop_keys:
+            print('Warning: unknown key: {0}'.format(desktop_key))
+        if android_key not in android_keys:
+            print('Warning: unknown key: {0}'.format(android_key))
+
+        theme_map[desktop_key] = android_key
+
+    return theme_map
+
+
+def get_transparency_map():
+    """Return dict that contains transparency lever for colors."""
+    def read_alpha(key, val):
+        if (is_number(val)):
+            return int(val, 16)
+
+        raise ValueError(
+            'Invalid transparency value: {0}={1}'.format(key, val))
+
+    return get_map(TRANSPARENCE_MAP_FILE, read_alpha)
+
+
+def get_map(filepath, func=None):
+    """Return dict that maps keys to values.
+
+    Arguments:
+    filepath - path to file contains map
+    func - function that is called for each map value
+    """
+    raw_map = {}
+    with open(filepath, 'r') as fp:
         for line in fp.readlines():
             if is_comment(line):
                 continue
 
             if is_key_val_pair(line, THEME_MAP_SEPARATOR):
-                desktop_key, android_key = line.strip().split('=', 1)
-                if desktop_key not in desktop_keys:
-                    print('Warning: unknown key: {0}'.format(desktop_key))
-                if android_key not in android_keys:
-                    print('Warning: unknown key: {0}'.format(android_key))
+                key, val = line.strip().split('=', 1)
+                if func:
+                    val = func(key, val)
+                raw_map[key] = val
 
-                theme_map[desktop_key] = android_key
-
-    return theme_map
+    return raw_map
 
 
 def get_empty_theme():
@@ -316,6 +350,11 @@ def read_color(raw_color):
         return int(raw_color[1:], 16)
     else:
         raise ValueError('Invalid color: {0}'.format(raw_color))
+
+
+def apply_transparency(color, alpha):
+    """Apply transparency level to given color in RGB format."""
+    return (color & 0xFFFFFF00) | (alpha)
 
 
 def is_number(string):
