@@ -69,3 +69,8 @@ def check_maps(theme_map, trans_map):
     for key in trans_map:
         if key not in desktop_keys:
             print('Warning: unknown key in tranparency map: {0}'.format(key))
+        elif key not in theme_map:
+            print('Warning: transparency for {0} key will be ignored'.format(
+                key))
+            print(
+                'Add this key to theme map or remove it from transparency map')
