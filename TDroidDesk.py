@@ -269,7 +269,7 @@ def get_map(filepath, func=None):
                 key, val = line.strip().split('=', 1)
                 if func:
                     val = func(key, val)
-                    if not val:
+                    if val is None:
                         continue
                 raw_map[key] = val
 
