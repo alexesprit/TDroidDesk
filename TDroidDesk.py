@@ -10,7 +10,6 @@ from argparse import ArgumentParser
 
 import maps
 import theme
-import util
 
 from converter import ThemeConverter
 
