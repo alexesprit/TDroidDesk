@@ -55,10 +55,8 @@ def parse_args(arg_parser):
 
 def convert_themes(theme_path, converter):
     """Convert theme using given converter object."""
-    if not theme_path:
-        theme_paths = glob.iglob(ATTHEME_WILDCARD)
-    else:
-        theme_paths = (theme_path, )
+    theme_paths = glob.iglob(ATTHEME_WILDCARD) \
+        if theme_path else (theme_path, )
 
     for theme_path in theme_paths:
         theme_name = os.path.splitext(theme_path)[0]
@@ -70,10 +68,10 @@ def convert_themes(theme_path, converter):
             theme.save_desktop_theme(desktop_theme, theme_name)
 
             print('Done converting {0}'.format(theme_name))
-        except ValueError as err:
-            print('Error: {0}'.format(err))
         except UnicodeDecodeError:
             print('Invalid theme file: {0}'.format(theme_path))
+        except ValueError as err:
+            print('Error: {0}'.format(err))
 
 
 if __name__ == '__main__':

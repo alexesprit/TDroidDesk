@@ -18,6 +18,7 @@ def get_theme_map():
 def get_transparency_map():
     """Return dict that contains transparency lever for colors."""
     def read_alpha(key, val):
+        """Read alpha level from string."""
         try:
             return int(val, 16)
         except ValueError:
