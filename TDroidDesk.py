@@ -367,7 +367,7 @@ def read_color(raw_color):
     if (is_number(raw_color)):
         return argb2rgba(int(raw_color))
     elif raw_color.startswith('#'):
-        return int(raw_color[1:], 16)
+        return argb2rgba(int(raw_color[1:], 16))
     else:
         raise ValueError('Invalid color: {0}'.format(raw_color))
 
