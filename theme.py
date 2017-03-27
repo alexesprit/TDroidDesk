@@ -94,7 +94,7 @@ def read_color(raw_color):
     Arguments:
     raw_color - string that contains color
     """
-    if (util.is_number(raw_color)):
+    if util.is_number(raw_color):
         return util.argb2rgba(int(raw_color))
     elif raw_color.startswith('#'):
         return util.argb2rgba(int(raw_color[1:], 16))
@@ -121,7 +121,7 @@ def save_desktop_theme(desktop_theme, filename):
     if isinstance(background, bytearray):
         with open(BACKGROUND_FILE, 'wb') as fp:
             fp.write(background)
-    elif (isinstance(background, int)):
+    elif isinstance(background, int):
         get_background_from_color(background).save(TILED_FILE, 'PNG')
 
     desktop_theme_file = DESKTOP_THEME_FILENAME.format(filename)
@@ -139,7 +139,7 @@ def get_background_from_color(color):
     Arguments:
     color - color in RGBA format
     """
-    r, g, b, a = util.get_rgba_from_color(color)
+    r, g, b, _ = util.get_rgba_from_color(color)
     return Image.new('RGB', TILED_BACKGROUND_SIZE, (r, g, b))
 
 
